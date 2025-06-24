@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .prank-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin: 15px 0;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .prank-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff5252, #ff7979);
+        }
+
+        .warning {
+            color: #ffeb3b;
+            font-size: 14px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        /* 恶作剧页面样式 */
+        .prank-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+        }
+
+        /* 假蓝屏 */
+        .blue-screen {
+            background: #0078d4;
+            color: white;
+            font-family: 'Consolas', monospace;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .sad-face {
+            font-size: 100px;
+            margin-bottom: 30px;
+        }
+
+        /* 假更新页面 */
+        .update-screen {
+            background: #1e1e1e;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #333;
+            border-top: 4px solid #00ff00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 病毒扫描 */
+        .virus-scan {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 30px;
+            overflow: hidden;
+        }
+
+        .scan-line {
+            margin: 5px 0;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* 鼠标追逐 */
+        .mouse-chase {
+            background: #f0f0f0;
+            position: relative;
+            cursor: none;
+        }
+
+        .chaser {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #ff4757;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: all 0.1s ease;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainMenu">
+        <h1>🎭 恶作剧工具箱</h1>
+        <button class="prank-btn" onclick="showPrank('blueScreen')">🔵 蓝屏死机</button>
+        <button class="prank-btn" onclick="showPrank('updateScreen')">⚙️ 系统更新</button>
+        <button class="prank-btn" onclick="showPrank('virusScan')">🦠 病毒扫描</button>
+        <button class="prank-btn" onclick="showPrank('mouseChase')">🐭 鼠标追逐</button>
+        <button class="prank-btn" onclick="matrixEffect()">💚 黑客帝国</button>
+        <div class="warning">⚠️ 请在朋友同意的情况下使用，仅供娱乐！</div>
+    </div>
+
+    <!-- 蓝屏页面 -->
+    <div class="prank-page blue-screen" id="blueScreen">
+        <button class="back-btn" onclick="hidePrank()">返回</button>
+        <div class="sad-face">:(</div>
+        <h1>你的电脑遇到问题，需要重新启动。</h1>
+        <p>我们只收集某些错误信息，然后为你重新启动。</p>
+        <p style="margin-top: 50px; font-size: 24px;">
+            <span id="percentage">0</span>% 完成
+        </p>
+        <p style="margin-top: 30px;">
+            有关此问题的详细信息和可能的解决方法，请访问 
+            <br>https://www.windows.com/stopcode
+        </p>
+        <p style="margin-top: 30px;">
+            如果致电支持人员，请向他们提供以下信息：<br>
+            终止代码: CRITICAL_PROCESS_DIED
+        </p>
+    </div>
+
+    <!-- 更新页面 -->
+    <div class="prank-page update-screen" id="updateScreen">
+        <button class="back-btn" onclick="hidePrank()">返回</button>
+        <h1>正在配置 Windows 更新</h1>
+        <div class="spinner"></div>
+        <p>请勿关闭计算机</p>
+        <p style="margin-top: 20px; font-size: 24px;">
+            <span id="updatePercentage">0</span>% 完成
+        </p>
+    </div>
+
+    <!-- 病毒扫描页面 -->
+    <div class="prank-page virus-scan" id="virusScan">
+        <button class="back-btn" onclick="hidePrank()">返回</button>
+        <h2>🛡️ 系统安全扫描正在进行中...</h2>
+        <div id="scanResults"></div>
+    </div>
+
+    <!-- 鼠标追逐页面 -->
+    <div class="prank-page mouse-chase" id="mouseChase">
+        <button class="back-btn" onclick="hidePrank()">返回</button>
+        <div style="text-align: center; padding: 50px; font-size: 24px;">
+            <h2>🐭 试着移动你的鼠标!</h2>
+            <p>有个小球在追你哦~</p>
+        </div>
+        <div class="chaser" id="chaser"></div>
+    </div>
+
+    <script>
+        function showPrank(prankId) {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById(prankId).style.display = 'block';
+            
+            // 启动对应的恶作剧效果
+            if (prankId === 'blueScreen') {
+                startBlueScreen();
+            } else if (prankId === 'updateScreen') {
+                startUpdate();
+            } else if (prankId === 'virusScan') {
+                startVirusScan();
+            } else if (prankId === 'mouseChase') {
+                startMouseChase();
+            }
+        }
+
+        function hidePrank() {
+            document.querySelectorAll('.prank-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('mainMenu').style.display = 'flex';
+            
+            // 清理效果
+            if (window.mouseChaseInterval) clearInterval(window.mouseChaseInterval);
+            if (window.virusScanInterval) clearInterval(window.virusScanInterval);
+            if (window.blueScreenInterval) clearInterval(window.blueScreenInterval);
+            if (window.updateInterval) clearInterval(window.updateInterval);
+        }
+
+        function startBlueScreen() {
+            let percentage = 0;
+            window.blueScreenInterval = setInterval(() => {
+                percentage += Math.random() * 3;
+                if (percentage > 100) percentage = 100;
+                document.getElementById('percentage').textContent = Math.floor(percentage);
+            }, 500);
+        }
+
+        function startUpdate() {
+            let percentage = 0;
+            window.updateInterval = setInterval(() => {
+                percentage += Math.random() * 2;
+                if (percentage > 100) percentage = 100;
+                document.getElementById('updatePercentage').textContent = Math.floor(percentage);
+            }, 800);
+        }
+
+        function startVirusScan() {
+            const scanResults = document.getElementById('scanResults');
+            const threats = [
+                '扫描文件: C:\\Windows\\System32\\virus.exe... 🦠 发现威胁!',
+                '扫描文件: C:\\Users\\Documents\\secret.txt... ✅ 安全',
+                '扫描文件: C:\\Program Files\\malware.dll... 🦠 发现威胁!',
+                '扫描文件: C:\\Windows\\explorer.exe... ✅ 安全',
+                '扫描文件: C:\\Temp\\suspicious.bat... 🦠 发现威胁!',
+                '扫描文件: C:\\Users\\Desktop\\homework.pdf... ✅ 安全',
+                '扫描文件: C:\\Downloads\\not_virus.exe... 🦠 发现威胁!',
+                '正在隔离威胁文件...',
+                '扫描完成! 发现 4 个威胁，已成功清除。'
+            ];
+            
+            let index = 0;
+            window.virusScanInterval = setInterval(() => {
+                if (index < threats.length) {
+                    const line = document.createElement('div');
+                    line.className = 'scan-line';
+                    line.style.animationDelay = '0s';
+                    line.textContent = threats[index];
+                    scanResults.appendChild(line);
+                    scanResults.scrollTop = scanResults.scrollHeight;
+                    index++;
+                } else {
+                    clearInterval(window.virusScanInterval);
+                }
+            }, 1000);
+        }
+
+        function startMouseChase() {
+            const chaser = document.getElementById('chaser');
+            const mouseChase = document.getElementById('mouseChase');
+            
+            mouseChase.addEventListener('mousemove', (e) => {
+                chaser.style.left = (e.clientX - 25) + 'px';
+                chaser.style.top = (e.clientY - 25) + 'px';
+            });
+        }
+
+        function matrixEffect() {
+            // 创建黑客帝国效果的全屏覆盖
+            const matrix = document.createElement('div');
+            matrix.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: black;
+                z-index: 9999;
+                overflow: hidden;
+            `;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            matrix.appendChild(canvas);
+            
+            const backBtn = document.createElement('button');
+            backBtn.textContent = '返回';
+            backBtn.className = 'back-btn';
+            backBtn.onclick = () => document.body.removeChild(matrix);
+            matrix.appendChild(backBtn);
+            
+            document.body.appendChild(matrix);
+            
+            // 绘制矩阵效果
+            const ctx = canvas.getContext('2d');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+            
+            const draw = () => {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#00ff00';
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            };
+            
+            setInterval(draw, 33);
+        }
+
+        // 防止右键和一些快捷键（增加真实感）
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
