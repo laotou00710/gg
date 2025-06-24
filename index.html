@@ -18,6 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden; /* 避免滚动条 */
         }
 
         .container {
@@ -131,6 +132,17 @@
 
     <script>
         function showPrank(prankId) {
+            // 请求全屏
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                document.documentElement.msRequestFullscreen();
+            }
+
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById(prankId).style.display = 'block';
             if (prankId === 'blueScreen') {
@@ -143,17 +155,4 @@
                 page.style.display = 'none';
             });
             document.getElementById('mainMenu').style.display = 'flex';
-            if (window.blueScreenInterval) clearInterval(window.blueScreenInterval);
-        }
-
-        function startBlueScreen() {
-            let percentage = 0;
-            window.blueScreenInterval = setInterval(() => {
-                percentage += Math.random() * 3;
-                if (percentage > 100) percentage = 100;
-                document.getElementById('percentage').textContent = Math.floor(percentage);
-            }, 500);
-        }
-    </script>
-</body>
-</html>
+            if (window.blueScreenInterval) clearInterval(window.blueScreenInterva
