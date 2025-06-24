@@ -18,7 +18,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* 避免滚动条 */
+            overflow: hidden;
+            height: 100vh;
         }
 
         .container {
@@ -62,7 +63,6 @@
             background: linear-gradient(45deg, #ff5252, #ff7979);
         }
 
-        /* 蓝屏页面样式 */
         .prank-page {
             display: none;
             position: fixed;
@@ -89,7 +89,6 @@
             margin-bottom: 30px;
         }
 
-        /* 返回按钮 */
         .back-btn {
             position: fixed;
             top: 20px;
@@ -131,17 +130,21 @@
     </div>
 
     <script>
-        function showPrank(prankId) {
-            // 请求全屏
+        // 强制进入全屏
+        function enterFullScreen() {
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+            } else if (document.documentElement.mozRequestFullScreen) {
                 document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
+            } else if (document.documentElement.webkitRequestFullscreen) {
                 document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+            } else if (document.documentElement.msRequestFullscreen) {
                 document.documentElement.msRequestFullscreen();
             }
+        }
+
+        function showPrank(prankId) {
+            enterFullScreen(); // 确保进入全屏
 
             document.getElementById('mainMenu').style.display = 'none';
             document.getElementById(prankId).style.display = 'block';
@@ -158,4 +161,26 @@
             if (window.blueScreenInterval) clearInterval(window.blueScreenInterval);
         }
 
-        function startBlue
+        function startBlueScreen() {
+            let percentage = 0;
+            window.blueScreenInterval = setInterval(() => {
+                percentage += Math.random() * 3;
+                if (percentage > 100) percentage = 100;
+                document.getElementById('percentage').textContent = Math.floor(percentage);
+            }, 500);
+        }
+
+        // 禁用 ESC 和 F11 键
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' || e.key === 'F11') {
+                e.preventDefault();
+            }
+        });
+
+        // 禁用右键菜单
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
